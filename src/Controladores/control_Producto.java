@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class control_Producto {
-
     private List<Modelo_Producto> listaProductos;
 
     public control_Producto() {
@@ -24,9 +23,8 @@ public class control_Producto {
         String sql = "SELECT Cod_Barra, nombre_Producto, precio_Actual, tipo, categoria_id FROM Producto";
 
         try (Connection cn = Conexion.Conexion_BD.conectar(); PreparedStatement pst = cn.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
-
+            Modelo_Producto producto = new Modelo_Producto();
             while (rs.next()) {
-                Modelo_Producto producto = new Modelo_Producto();
                 producto.setCod_barra(rs.getString("Cod_Barra"));
                 producto.setNombre(rs.getString("nombre_Producto"));
                 producto.setPrecio_Actual(rs.getDouble("precio_Actual"));
@@ -54,12 +52,12 @@ public class control_Producto {
     public boolean guardar(Modelo_Producto objeto) {
 
         boolean respuesta = false;
-        Connection cn;
-        cn = Conexion.Conexion_BD.conectar();
+        Connection cn = Conexion.Conexion_BD.conectar();
 
         try {
             PreparedStatement consulta = cn.prepareStatement("insert into Producto values(?,?,?,?,?)");
-            consulta.setString(1, objeto.getCod_barra());//Cod_Barra
+            // Codigo de Barra
+            consulta.setString(1, objeto.getCod_barra());
             consulta.setString(2, objeto.getNombre());
             consulta.setString(3, objeto.getTipo());
             consulta.setInt(4, objeto.getCategoria());
@@ -79,14 +77,13 @@ public class control_Producto {
 
     //Metodo para saber si existe un Producto
     public boolean existeProducto(String codigoBarra) {
-
         boolean respuesta = false;
-        String sql = "select Cod_Barra from Producto where Cod_Barra = '" + codigoBarra + "'; ";
-        Statement st;
+        String sql = "SELECT Cod_Barra FROM Producto WHERE Cod_Barra = '" + codigoBarra + "'; ";
 
         try {
             Connection cn = Conexion.Conexion_BD.conectar();
-            st = cn.createStatement();
+
+            Statement st = cn.createStatement();
             ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
                 respuesta = true;
@@ -108,7 +105,6 @@ public class control_Producto {
         String sql = "SELECT nombre_Producto, precio_Actual, tipo, categoria_id FROM Producto WHERE Cod_Barra = ?";
 
         try (Connection cn = Conexion.Conexion_BD.conectar(); PreparedStatement pst = cn.prepareStatement(sql)) {
-
             pst.setString(1, codigoBarra);
             ResultSet rs = pst.executeQuery();
 
@@ -147,9 +143,8 @@ public class control_Producto {
     }
 
     public boolean eliminar(String codigoBarra) {
-
         Modelo_Producto producto = new Modelo_Producto();
-        String sql = "delete from Producto where Cod_Barra = ?";
+        String sql = "DELETE FROM Producto WHERE Cod_Barra = ?";
 
         try (Connection cn = Conexion.Conexion_BD.conectar(); PreparedStatement pst = cn.prepareStatement(sql)) {
 
@@ -163,8 +158,5 @@ public class control_Producto {
         }
 
     }
-    
-    
-    
     
 }

@@ -8,10 +8,6 @@ import java.util.List;
 public class control_Cat_Proveedor {
 
     private List<Modelo_categoria> listaCategoria;
-
-    public control_Cat_Proveedor(){
-    
-    }
     
     public control_Cat_Proveedor(List<Modelo_categoria> listaCategoria) {
         if (this.listaCategoria == null || this.listaCategoria.isEmpty()) {
@@ -24,15 +20,13 @@ public class control_Cat_Proveedor {
         String sql = "SELECT id, nombre_Categoria FROM Categoria";
 
         try (Connection cn = Conexion.Conexion_BD.conectar(); PreparedStatement pst = cn.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
-
+            // Para que no se creen varias instancias
+            Modelo_categoria categoria = new Modelo_categoria();
             while (rs.next()) {
-                Modelo_categoria categoria = new Modelo_categoria();
                 categoria.setId(rs.getInt("id"));
                 categoria.setDescripcion(rs.getString("nombre_Categoria"));
-
                 lista.add(categoria);
             }
-
             System.out.println("Carga exitosa de la tabla categoria \n");
 
         } catch (SQLException e) {
@@ -52,8 +46,7 @@ public class control_Cat_Proveedor {
     //Metodo para guardar categoria en base de datos
     public boolean guardar(Modelo_categoria objeto) {
         boolean respuesta = false;
-        Connection cn;
-        cn = Conexion.Conexion_BD.conectar();
+        Connection cn = Conexion.Conexion_BD.conectar();
         try {
             PreparedStatement consulta = cn.prepareStatement("insert into Categoria values(?,?)");
             consulta.setInt(1, objeto.getId());
@@ -89,7 +82,7 @@ public class control_Cat_Proveedor {
         } catch (Exception e) {
             System.out.println("Error al eliminar categoria" + e);
         }
-
+        
         return respuesta;
     }
 
