@@ -26,8 +26,8 @@ public class control_Cuenta {
 
         try (Connection cn = Conexion.Conexion_BD.conectar(); PreparedStatement pst = cn.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
 
+            Modelo_Cuenta cuenta = new Modelo_Cuenta();
             while (rs.next()) {
-                Modelo_Cuenta cuenta = new Modelo_Cuenta();
                 cuenta.setId(rs.getInt("id"));
                 cuenta.setDescripcion(rs.getString("nombreCuenta"));
 
@@ -38,9 +38,9 @@ public class control_Cuenta {
 
         } catch (SQLException e) {
             System.out.println("Error al cargar las cuentas: " + e.getMessage());
+        } finally {
+            return lista;  
         }
-
-        return lista;
     }
 
     public List<Modelo_Cuenta> getListaCuentas(){
@@ -52,46 +52,40 @@ public class control_Cuenta {
     
      //Metodo para guardar categoria en base de datos
     public boolean guardar(Modelo_Cuenta objeto) {
-        boolean respuesta = false;
-        Connection cn;
-        cn = Conexion.Conexion_BD.conectar();
+        Connection cn = Conexion.Conexion_BD.conectar();
         try {
             PreparedStatement consulta = cn.prepareStatement("insert into Cuenta values(?,?)");
             consulta.setInt(1, objeto.getId());
             consulta.setString(2, objeto.getDescripcion());
 
             if (consulta.executeUpdate() > 0) {
-                respuesta = true;
+                return true;
             }
-
-            cn.close();
-
+            return false;
         } catch (Exception e) {
             System.out.println("Error al guardar cuenta: " + e);
+        } finally{
+            cn.close();
         }
-        return respuesta;
     }
     
     //metodo para eliminar categorias de la Gestion de Categorias 
     public boolean eliminar(int idCuenta) {
-        boolean respuesta = false;
         Connection cn = Conexion.Conexion_BD.conectar();
-
         try {
             PreparedStatement consulta = cn.prepareStatement("delete from Cuenta where id ='" + idCuenta + "'");
             consulta.executeUpdate();
 
             if (consulta.executeUpdate() > 0) {
-                respuesta = true;
+                return true;
             }
-
-            cn.close();
+            return false;
 
         } catch (Exception e) {
             System.out.println("Error al eliminar categoria" + e);
+        } finally {
+            cn.close();
         }
-
-        return respuesta;
     }
     
 }

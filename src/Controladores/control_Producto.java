@@ -25,8 +25,8 @@ public class control_Producto {
 
         try (Connection cn = Conexion.Conexion_BD.conectar(); PreparedStatement pst = cn.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
 
+            Modelo_Producto producto = new Modelo_Producto();
             while (rs.next()) {
-                Modelo_Producto producto = new Modelo_Producto();
                 producto.setCod_barra(rs.getString("Cod_Barra"));
                 producto.setNombre(rs.getString("nombre_Producto"));
                 producto.setPrecio_Actual(rs.getDouble("precio_Actual"));

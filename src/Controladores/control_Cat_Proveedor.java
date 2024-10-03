@@ -8,10 +8,6 @@ import java.util.List;
 public class control_Cat_Proveedor {
 
     private List<Modelo_categoria> listaCategoria;
-
-    public control_Cat_Proveedor(){
-    
-    }
     
     public control_Cat_Proveedor(List<Modelo_categoria> listaCategoria) {
         if (this.listaCategoria == null || this.listaCategoria.isEmpty()) {
@@ -25,8 +21,8 @@ public class control_Cat_Proveedor {
 
         try (Connection cn = Conexion.Conexion_BD.conectar(); PreparedStatement pst = cn.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
 
+            Modelo_categoria categoria = new Modelo_categoria();
             while (rs.next()) {
-                Modelo_categoria categoria = new Modelo_categoria();
                 categoria.setId(rs.getInt("id"));
                 categoria.setDescripcion(rs.getString("nombre_Categoria"));
 
@@ -52,28 +48,26 @@ public class control_Cat_Proveedor {
     //Metodo para guardar categoria en base de datos
     public boolean guardar(Modelo_categoria objeto) {
         boolean respuesta = false;
-        Connection cn;
-        cn = Conexion.Conexion_BD.conectar();
+        Connection cn = Conexion.Conexion_BD.conectar();
         try {
             PreparedStatement consulta = cn.prepareStatement("insert into Categoria values(?,?)");
             consulta.setInt(1, objeto.getId());
             consulta.setString(2, objeto.getDescripcion());
 
             if (consulta.executeUpdate() > 0) {
-                respuesta = true;
+                return true;
             }
 
-            cn.close();
-
+            return false;
         } catch (Exception e) {
             System.out.println("Error al guardar categoria: " + e);
+        } finally {
+            cn.close();
         }
-        return respuesta;
     }
 
     //metodo para eliminar categorias de la Gestion de Categorias 
     public boolean eliminar(int idCategoria) {
-        boolean respuesta = false;
         Connection cn = Conexion.Conexion_BD.conectar();
 
         try {
@@ -81,16 +75,14 @@ public class control_Cat_Proveedor {
             consulta.executeUpdate();
 
             if (consulta.executeUpdate() > 0) {
-                respuesta = true;
+                return true;
             }
-
-            cn.close();
-
+            return false;
         } catch (Exception e) {
             System.out.println("Error al eliminar categoria" + e);
+        } finally {
+            cn.close();
         }
-
-        return respuesta;
     }
 
 }
